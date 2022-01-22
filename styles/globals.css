@@ -1,9 +1,37 @@
 html,
 body {
-    padding: 0;
+    padding: 1em;
     margin: 0;
 }
 
 * {
     box-sizing: border-box;
+}
+
+.input-box {
+    outline: solid;
+    padding: 1em;
+}
+
+textarea {
+    width: 0;
+    height: 0;
+    transform: scale(0);
+    resize: none;
+}
+
+.cursor {
+    display: inline-block;
+    border-left: 1px solid;
+    height: 1em;
+    animation: blink 0.7s infinite alternate;
+}
+
+@keyframes blink {
+    from {
+        border-color: black;
+    }
+    to {
+        border-color: white;
+    }
 }
