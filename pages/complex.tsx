@@ -8,6 +8,10 @@ function drawLine(ctx: CanvasRenderingContext2D, x1: number, y1: number, x2: num
     ctx.stroke();
 }
 
+function approxEqual(a: number, b: number) {
+    return Math.abs(a - b) <= 0.4;
+}
+
 export default () => {
     const canvas_ref = useRef<HTMLCanvasElement>(null);
 
@@ -39,6 +43,23 @@ export default () => {
         context.strokeStyle = "black";
         drawLine(context, 0, 250, 500, 250); // Horizontal Axis Line
         drawLine(context, 250, 0, 250, 500); // Verticle Axis Line
+
+        const image_data = context.getImageData(0, 0, 500, 500);
+        const pixels = image_data.data;
+        for (let py = 0; py < 500; py++) {
+            const y = py / 25 - 10;
+            for (let px = 0; px < 500; px++) {
+                const x = px / 25 - 10;
+                if (approxEqual(x ** 2 + y ** 2, 16)) {
+                    const offset = (py * 500 + px) * 4;
+                    pixels[offset] = 255;
+                    pixels[offset + 1] = 0;
+                    pixels[offset + 2] = 0;
+                    pixels[offset + 3] = 255;
+                }
+            }
+        }
+        context.putImageData(image_data, 0, 0);
     }, []);
 
     return (
