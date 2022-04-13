@@ -14,11 +14,6 @@ function approxEqual(a: number, b: number, precision = 0.05): boolean {
     return Math.abs(a - b) <= precision;
 }
 
-// @ts-expect-error it is used but by the user
-function C(real: number, imaginary: number) {
-    return new Complex(real, imaginary);
-}
-
 export default () => {
     const canvas_ref = useRef<HTMLCanvasElement>(null);
     const [expression, setExpression] = useState("z => approxEqual(z.abs(), 4)");
@@ -28,7 +23,7 @@ export default () => {
         try {
             inSet = eval(expression);
             inSet(new Complex(3, 4)); // ensuring it works
-        } catch (e) {
+        } catch {
             return;
         }
 
