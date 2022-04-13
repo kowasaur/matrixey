@@ -1,6 +1,7 @@
 import "katex/dist/katex.min.css";
 import Latex from "react-latex-next";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { NavBar } from "../components/navbar";
 
 export default () => {
     const [input, setInput] = useState("");
@@ -66,21 +67,29 @@ export default () => {
     useEffect(focusInput, []);
 
     return (
-        // tabIndex makes focus work on divs
-        <div className="input-box" tabIndex={0} onFocus={focusInput}>
-            <textarea
-                onChange={handleInput}
-                value={input}
-                ref={textarea}
-                onBlur={() => setInputFocused(false)}
-            />
-            <Latex>{`$ ${input} $`}</Latex>
-            {inputFocused && <div className="cursor" />}
-            {result && (
-                <div className="result">
-                    <Latex>{`$ ${result} $`}</Latex>
-                </div>
-            )}
-        </div>
+        <>
+            <NavBar />
+
+            <div
+                className="input-box"
+                // tabIndex makes focus work on divs
+                tabIndex={0}
+                onFocus={focusInput}
+            >
+                <textarea
+                    onChange={handleInput}
+                    value={input}
+                    ref={textarea}
+                    onBlur={() => setInputFocused(false)}
+                />
+                <Latex>{`$ ${input} $`}</Latex>
+                {inputFocused && <div className="cursor" />}
+                {result && (
+                    <div className="result">
+                        <Latex>{`$ ${result} $`}</Latex>
+                    </div>
+                )}
+            </div>
+        </>
     );
 };
