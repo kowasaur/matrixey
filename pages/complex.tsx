@@ -1,5 +1,6 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { NavBar } from "../components/navbar";
+import { Complex } from "../maths";
 
 function drawLine(ctx: CanvasRenderingContext2D, x1: number, y1: number, x2: number, y2: number) {
     ctx.beginPath();
@@ -8,16 +9,33 @@ function drawLine(ctx: CanvasRenderingContext2D, x1: number, y1: number, x2: num
     ctx.stroke();
 }
 
-function approxEqual(a: number, b: number) {
-    return Math.abs(a - b) <= 0.4;
+// @ts-expect-error it is used but by the user
+function approxEqual(a: number, b: number, precision = 0.05): boolean {
+    return Math.abs(a - b) <= precision;
+}
+
+// @ts-expect-error it is used but by the user
+function C(real: number, imaginary: number) {
+    return new Complex(real, imaginary);
 }
 
 export default () => {
     const canvas_ref = useRef<HTMLCanvasElement>(null);
+    const [expression, setExpression] = useState("z => approxEqual(z.abs(), 4)");
 
     useEffect(() => {
+        let inSet: (z: Complex) => boolean;
+        try {
+            inSet = eval(expression);
+            inSet(new Complex(3, 4)); // ensuring it works
+        } catch (e) {
+            return;
+        }
+
         const canvas = canvas_ref.current!;
         const context = canvas.getContext("2d")!;
+
+        context.clearRect(0, 0, 500, 500); // reset canvas
 
         // Minor grid lines
         context.strokeStyle = "lightgrey";
@@ -47,10 +65,10 @@ export default () => {
         const image_data = context.getImageData(0, 0, 500, 500);
         const pixels = image_data.data;
         for (let py = 0; py < 500; py++) {
-            const y = py / 25 - 10;
+            const y = 10 - py / 25;
             for (let px = 0; px < 500; px++) {
                 const x = px / 25 - 10;
-                if (approxEqual(x ** 2 + y ** 2, 16)) {
+                if (inSet(new Complex(x, y))) {
                     const offset = (py * 500 + px) * 4;
                     pixels[offset] = 255;
                     pixels[offset + 1] = 0;
@@ -60,12 +78,18 @@ export default () => {
             }
         }
         context.putImageData(image_data, 0, 0);
-    }, []);
+    }, [expression]);
 
     return (
         <>
             <NavBar />
             <canvas width="500" height="500" ref={canvas_ref} />
+            <textarea
+                cols={35}
+                rows={27}
+                onChange={e => setExpression(e.target.value)}
+                value={expression}
+            />
         </>
     );
 };

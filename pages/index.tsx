@@ -77,6 +77,7 @@ export default () => {
                 onFocus={focusInput}
             >
                 <textarea
+                    id="calculator-input"
                     onChange={handleInput}
                     value={input}
                     ref={textarea}
