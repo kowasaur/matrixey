@@ -42,3 +42,9 @@ textarea {
     background-color: aquamarine;
     padding: 0.3em 0.5em;
 }
+
+/* Complex Number Sketching */
+
+canvas {
+    outline: solid black 1px;
+}
