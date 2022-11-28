@@ -14,9 +14,19 @@ function approxEqual(a: number, b: number, precision = 0.05): boolean {
     return Math.abs(a - b) <= precision;
 }
 
+const ARC_CODE = `z => {
+    const c  = z.subr(1).subi(2)
+    const a = c.Arg()
+    return 0 <= a && a <= 2 * Math.PI / 3 && approxEqual(c.abs(), 2)
+}`;
+
 export default () => {
     const canvas_ref = useRef<HTMLCanvasElement>(null);
     const [expression, setExpression] = useState("z => approxEqual(z.abs(), 4)");
+
+    const Example: React.FC<{ code: string }> = ({ code, children }) => (
+        <button onClick={() => setExpression(code)}>{children}</button>
+    );
 
     useEffect(() => {
         let inSet: (z: Complex) => boolean;
@@ -80,11 +90,23 @@ export default () => {
             <NavBar />
             <canvas width="500" height="500" ref={canvas_ref} />
             <textarea
-                cols={35}
+                cols={40}
                 rows={27}
                 onChange={e => setExpression(e.target.value)}
                 value={expression}
             />
+            <br />
+            <div>
+                <h2>Examples</h2>
+                <Example code="z => approxEqual(z.abs(), 4)">Circle</Example>
+                <Example code={ARC_CODE}>Arc</Example>
+                <Example code="z => approxEqual(z.addr(2).abs(), Math.sqrt(5) + z.subi(1).abs(), 0.0001)">
+                    Ray
+                </Example>
+                <Example code="z => Math.PI / 6 <= z.Arg() && z.Arg() <= 5 * Math.PI / 6 && z.subi(1).abs() <= 2">
+                    Fan
+                </Example>
+            </div>
         </>
     );
 };
